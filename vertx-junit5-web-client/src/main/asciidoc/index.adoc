@@ -13,29 +13,14 @@ Web API using the Web Client.
 
 == Use Web Client in your tests
 
-To use the Web Client, you need to register the extension {@link io.vertx.junit5.web.VertxWebClientExtension} *after* the
-{@link io.vertx.junit5.VertxExtension}. You can do both:
-
-[source,java]
----
-{@link examples.MultipleAnnotationsTest}
----
-
-Or
-
-[source,java]
----
-{@link examples.SingleAnnotationTest}
----
-
-Look at https://junit.org/junit5/docs/current/user-guide/#extensions-registration-declarative[JUnit 5 documentation] for more details
-
-Now you can add {@link io.vertx.ext.web.client.WebClient} as a test method parameter, like:
+To use the Web Client, you just need to add this dependency to the test classpath add {@link io.vertx.ext.web.client.WebClient} as a test method parameter, like:
 
 [source,java]
 ---
 {@link examples.SimpleTest#myTest}
 ---
+
+IMPORTANT: You *must* always add `Vertx` as first parameter of your test method, otherwise the extension won't be able to resolve the `Vertx` instance
 
 === Use `WebClientOptions`
 

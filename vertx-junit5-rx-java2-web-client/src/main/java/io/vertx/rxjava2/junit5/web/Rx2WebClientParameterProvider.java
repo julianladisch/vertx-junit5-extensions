@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-package io.vertx.junit5.web;
+package io.vertx.rxjava2.junit5.web;
 
-import io.vertx.core.Vertx;
-import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.junit5.ParameterClosingConsumer;
 import io.vertx.junit5.ScopedObject;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxExtensionParameterProvider;
+import io.vertx.junit5.web.WebClientParameterProvider;
+import io.vertx.reactivex.core.Vertx;
+import io.vertx.reactivex.ext.web.client.WebClient;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
-import org.junit.platform.commons.util.AnnotationUtils;
-import org.junit.platform.commons.util.ReflectionUtils;
 
-import java.lang.reflect.Field;
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * WebClient parameter provider.
@@ -39,7 +35,7 @@ import java.util.Optional;
  * @author <a href="https://julien.ponge.org/">Julien Ponge</a>
  * @author <a href="https://slinkydeveloper.com/">Francesco Guardiani</a>
  */
-public class WebClientParameterProvider implements VertxExtensionParameterProvider<WebClient> {
+public class Rx2WebClientParameterProvider implements VertxExtensionParameterProvider<WebClient> {
 
   @Override
   public Class<WebClient> type() {
@@ -57,27 +53,12 @@ public class WebClientParameterProvider implements VertxExtensionParameterProvid
     ScopedObject scopedObject = store.get(VertxExtension.VERTX_INSTANCE_KEY, ScopedObject.class);
     Objects.requireNonNull(scopedObject, "A Vertx instance must exist, try adding the Vertx parameter as the first method argument");
     Vertx vertx = (Vertx) scopedObject.get();
-    WebClientOptions webClientOptions = getWebClientOptions(extensionContext).orElse(new WebClientOptions());
+    WebClientOptions webClientOptions = WebClientParameterProvider.getWebClientOptions(extensionContext).orElse(new WebClientOptions());
     return WebClient.create(vertx, webClientOptions);
   }
 
   @Override
   public ParameterClosingConsumer<WebClient> parameterClosingConsumer() {
     return WebClient::close;
-  }
-
-  public static Optional<WebClientOptions> getWebClientOptions(ExtensionContext context) {
-    Optional<Class<?>> thisTestClass = context.getTestClass();
-    if (!thisTestClass.isPresent()) {
-      return Optional.empty();
-    }
-    List<Field> webClientOptionsField = AnnotationUtils
-      .findPublicAnnotatedFields(thisTestClass.get(), WebClientOptions.class, WebClientOptionsInject.class);
-    if (webClientOptionsField.isEmpty()) {
-      return Optional.empty();
-    }
-    return ReflectionUtils
-      .tryToReadFieldValue(webClientOptionsField.get(0), context.getTestInstance().get())
-      .toOptional().map(o -> (WebClientOptions)o);
   }
 }
