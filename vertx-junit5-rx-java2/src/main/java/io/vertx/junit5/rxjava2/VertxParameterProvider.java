@@ -18,6 +18,7 @@ package io.vertx.junit5.rxjava2;
 
 import io.vertx.core.VertxException;
 import io.vertx.junit5.ParameterClosingConsumer;
+import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxExtensionParameterProvider;
 import io.vertx.reactivex.core.Vertx;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -41,7 +42,7 @@ public class VertxParameterProvider implements VertxExtensionParameterProvider<V
 
   @Override
   public String key() {
-    return "VertxRx2";
+    return VertxExtension.VERTX_INSTANCE_KEY;
   }
 
   @Override

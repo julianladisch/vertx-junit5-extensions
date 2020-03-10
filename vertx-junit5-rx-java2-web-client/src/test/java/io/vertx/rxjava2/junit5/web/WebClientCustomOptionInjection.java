@@ -13,30 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.vertx.rxjava2.junit5.web;
 
-package examples;
-
-import io.vertx.core.Vertx;
-import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import io.vertx.junit5.web.WebClientOptionsInject;
+import io.vertx.reactivex.core.Vertx;
+import io.vertx.reactivex.ext.web.client.WebClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(VertxExtension.class)
-public class WithOptionsTest {
+public class WebClientCustomOptionInjection {
 
   @WebClientOptionsInject
-  public WebClientOptions options = new WebClientOptions()
-    .setDefaultHost("example.com")
-    .setSsl(true)
-    .setDefaultPort(9000);
+  public WebClientOptions options = new WebClientOptions().setDefaultPort(9001).setDefaultHost("localhost");
 
   @Test
-  public void myTest(Vertx vertx, WebClient webClient, VertxTestContext testContext) {
-    webClient.get("/hello"); // GET https://example.com:9000/hello
+  void test(Vertx vertx, VertxTestContext testContext, WebClient client) {
+    vertx.createHttpServer().requestHandler(req -> {
+      req.response().end();
+      testContext.completeNow();
+    }).listen(9001, h -> {
+      client.get("/bla").send(testContext.succeeding());
+    });
   }
 
 }

@@ -16,6 +16,7 @@
 
 package examples;
 
+import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.Json;
@@ -35,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 public class TestRequestExample {
 
   @Test
-  public void testWithWebClient(WebClient client, VertxTestContext testContext) {
+  public void testWithWebClient(Vertx vertx, WebClient client, VertxTestContext testContext) {
     client
       .get("/hello")
       .addQueryParam("name", "francesco")
@@ -57,7 +58,7 @@ public class TestRequestExample {
   }
 
   @Test
-  public void testWithTestRequest(WebClient client, VertxTestContext testContext) {
+  public void testWithTestRequest(Vertx vertx, WebClient client, VertxTestContext testContext) {
     testRequest(client, HttpMethod.GET, "/hello")
       .with(queryParam("name", "francesco"), requestHeader("x-my", "foo"))
       .expect(
@@ -68,7 +69,7 @@ public class TestRequestExample {
   }
 
   @Test
-  public void testWithTestRequestCheckpoint(WebClient client, VertxTestContext testContext) {
+  public void testWithTestRequestCheckpoint(Vertx vertx, WebClient client, VertxTestContext testContext) {
     Checkpoint checkpoint = testContext.checkpoint(1);
 
     testRequest(client, HttpMethod.GET, "/hello")
@@ -81,13 +82,13 @@ public class TestRequestExample {
   }
 
   @Test
-  public void testWithTestRequestWrapping(WebClient client, VertxTestContext testContext) {
+  public void testWithTestRequestWrapping(Vertx vertx, WebClient client, VertxTestContext testContext) {
     testRequest(
-        client
-          .get("/hello")
-          .addQueryParam("name", "francesco")
-          .putHeader("x-my", "foo")
-      )
+      client
+        .get("/hello")
+        .addQueryParam("name", "francesco")
+        .putHeader("x-my", "foo")
+    )
       .expect(
         jsonBodyResponse(new JsonObject().put("value", "Hello Francesco!")),
         responseHeader("x-my", "bar")
@@ -96,7 +97,7 @@ public class TestRequestExample {
   }
 
   @Test
-  public void testWithTestRequestCustomAssert(WebClient client, VertxTestContext testContext) {
+  public void testWithTestRequestCustomAssert(Vertx vertx, WebClient client, VertxTestContext testContext) {
     // No need to wrap in testContext#verify
     Consumer<HttpResponse<Buffer>> myAssert = req -> assertNotEquals(200, req.statusCode());
 
@@ -109,7 +110,7 @@ public class TestRequestExample {
   }
 
   @Test
-  public void testWithTestRequestChaining(WebClient client, VertxTestContext testContext) {
+  public void testWithTestRequestChaining(Vertx vertx, WebClient client, VertxTestContext testContext) {
     Checkpoint checkpoint = testContext.checkpoint(3);
 
     testRequest(client, HttpMethod.GET, "/hello")
