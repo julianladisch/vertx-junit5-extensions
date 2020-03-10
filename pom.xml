@@ -29,6 +29,8 @@
     <module>vertx-junit5-web-client</module>
     <module>vertx-junit5-rx-java</module>
     <module>vertx-junit5-rx-java2</module>
+    <module>vertx-junit5-rx-java-web-client</module>
+    <module>vertx-junit5-rx-java2-web-client</module>
   </modules>
 
   <artifactId>vertx-junit5-extensions-parent</artifactId>
